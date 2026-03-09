@@ -37,7 +37,7 @@ app.post('/webhook', async (req, res) => {
           inline_keyboard: [[
             {
               text: '▶️ Oyna!',
-              url: GAME_URL
+              web_app: { url: GAME_URL }
             }
           ]]
         }
