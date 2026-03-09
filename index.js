@@ -2,6 +2,15 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
+// CORS - Netlify'dan gelen isteklere izin ver
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  next();
+});
+
 const BOT_TOKEN = '8371320372:AAGddfjjTOuyp3x5nYt-NLnVpabJ_PW6DHk';
 const GAME_URL = 'https://deluxe-clafoutis-356261.netlify.app/';
 
@@ -87,6 +96,20 @@ app.post('/result', async (req, res) => {
 });
 
 app.get('/', (_, res) => res.send('Bot calisiyor'));
+
+// Bot komutlarini kaydet (bir kere calisir)
+async function registerCommands() {
+  await sendRequest('setMyCommands', {
+    commands: [
+      { command: 'oyun', description: '🎮 Adam Asmaca oyununu başlat' },
+      { command: 'skor', description: '🏆 Liderlik tablosunu gör' }
+    ],
+    scope: { type: 'all_group_chats' }
+  });
+  console.log('Komutlar kaydedildi');
+}
+
+registerCommands();
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Bot ${PORT} portunda çalışıyor`));
