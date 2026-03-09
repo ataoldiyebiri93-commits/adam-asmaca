@@ -37,7 +37,7 @@ app.post('/webhook', async (req, res) => {
           inline_keyboard: [[
             {
               text: '▶️ Oyna!',
-              url: 'https://t.me/xoxoyunbot/adamasmaca'
+              url: `https://t.me/xoxoyunbot/adamasmaca?startapp=${chatId}`
             }
           ]]
         }
@@ -48,7 +48,45 @@ app.post('/webhook', async (req, res) => {
   res.sendStatus(200);
 });
 
-app.get('/', (_, res) => res.send('Bot çalışıyor ✅'));
+
+// Skor tablosu (bellekte tutuluyor)
+const leaderboard = {};
+
+app.post('/result', async (req, res) => {
+  const { win, word, userName, chatId, wins, losses, streak } = req.body;
+  console.log('Result geldi:', req.body);
+
+  if (!chatId) return res.sendStatus(200);
+
+  // Leaderboard güncelle
+  if (!leaderboard[chatId]) leaderboard[chatId] = {};
+  if (!leaderboard[chatId][userName]) leaderboard[chatId][userName] = { wins: 0, losses: 0 };
+  if (win) leaderboard[chatId][userName].wins++;
+  else leaderboard[chatId][userName].losses++;
+
+  // Gruba sonuc mesaji at
+  const emoji = win ? '\u{1F389}' : '\u{1F480}';
+  const sonuc = win ? `"${word}" kelimesini bildi!` : `"${word}" kelimesini bilemedi!`;
+  const streakText = (win && streak > 1) ? ` \u{1F525} ${streak} oyun serisi!` : '';
+
+  const text = emoji + ' ' + userName + ' ' + sonuc + streakText + '\n\n' +
+    '\u{1F3C6} Toplam: ' + wins + ' kazandi | \u{1F480} ' + losses + ' kaybetti\n\n' +
+    '\u{1F447} Sen de oyna!';
+
+  await sendRequest('sendMessage', {
+    chat_id: chatId,
+    text: text,
+    reply_markup: {
+      inline_keyboard: [[
+        { text: '\u25B6\uFE0F Oyna!', url: 'https://t.me/xoxoyunbot/adamasmaca' }
+      ]]
+    }
+  });
+
+  res.sendStatus(200);
+});
+
+app.get('/', (_, res) => res.send('Bot calisiyor'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Bot ${PORT} portunda çalışıyor`));
