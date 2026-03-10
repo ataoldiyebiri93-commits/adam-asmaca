@@ -11,7 +11,7 @@ app.use((req, res, next) => {
   next();
 });
 
-const BOT_TOKEN = '8371320372:AAGddfjjTOuyp3x5nYt-NLnVpabJ_PW6DHk';
+const BOT_TOKEN = process.env.BOT_TOKEN;
 const GAME_URL = 'https://deluxe-clafoutis-356261.netlify.app/';
 
 async function sendRequest(method, body) {
