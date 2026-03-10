@@ -80,15 +80,17 @@ app.post('/result', async (req, res) => {
 
   const text = emoji + ' ' + userName + ' ' + sonuc + streakText + '\n\n' +
     '\u{1F3C6} Toplam: ' + wins + ' kazandi | \u{1F480} ' + losses + ' kaybetti\n\n' +
-    '\u{1F447} Sen de oyna!';
+    '\u{1F447} Sen de oyna!' + '\n\n' +
+    '';
 
   await sendRequest('sendMessage', {
     chat_id: chatId,
     text: text,
     reply_markup: {
-      inline_keyboard: [[
-        { text: '\u25B6\uFE0F Oyna!', url: 'https://t.me/xoxoyunbot/adamasmaca' }
-      ]]
+      inline_keyboard: [
+        [{ text: '\u25B6\uFE0F Oyna!', url: 'https://t.me/xoxoyunbot/adamasmaca' }],
+        [{ text: '\u{1F514} Bildirim Al', url: 'https://t.me/xoxoyunbot?start=notify' }]
+      ]
     }
   });
 
@@ -101,8 +103,7 @@ app.get('/', (_, res) => res.send('Bot calisiyor'));
 async function registerCommands() {
   await sendRequest('setMyCommands', {
     commands: [
-      { command: 'oyun', description: '🎮 Adam Asmaca oyununu başlat' },
-      { command: 'skor', description: '🏆 Liderlik tablosunu gör' }
+      { command: 'oyun', description: '🎮 Adam Asmaca oyununu başlat' }
     ],
     scope: { type: 'all_group_chats' }
   });
